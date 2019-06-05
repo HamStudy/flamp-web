@@ -4,9 +4,28 @@
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <script src="./flampWeb.js"></script>
     <script type="text/javascript">
-    
+
+        var mt63;
         window.onload = function() {
-            
+            mt63_flamp.init('').then(function(cli) {
+                mt63 = cli;
+            });
+            polyfill();
+
+            document.getElementById("btnSend").addEventListener('click', function(evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                var strToPlay = document.getElementById("sendStr").value;
+                mt63.encodeString(strToPlay, 2000, 1, audioCtx).source.start();
+            }, false);
+
+            document.getElementById("btnListen").addEventListener('click', function(evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                startListening();
+            }, false);
         };
 
         function polyfill() {
@@ -59,7 +78,6 @@
 
         function startListening() {
             // Bandwidth 2000, long interleave (1), integration period 16, squelch 8.0
-            initMT63Rx(2000, 1, 16, 5.0); 
             var isLocalhost = window.location.hostname == 'localhost' ||
                 window.location.hostname == '127.0.0.1';
             if (window.location.protocol != 'https:' && !isLocalhost) {
@@ -73,18 +91,17 @@
 
             let audioInput = context.createMediaStreamSource(stream);
             let scriptProc = context.createScriptProcessor(8192, 1, 1);
-            scriptProc.onaudioprocess = function(aEvt) {
+            /**
+             *  @param {AudioProcessEvent} aEvt
+             */
+            scriptProc.onaudioprocess = function onAudioProcess(aEvt) {
                 let inpBuffer = aEvt.inputBuffer.getChannelData(0);
-                let ReSamp = new Resampler(aEvt.inputBuffer.sampleRate, 8000, 1, inpBuffer);
-
-                let newLen = ReSamp.resampler(inpBuffer.length);
-                let newBuff = ReSamp.outputBuffer;
-                let res = processMT63Rx(newBuff, newLen);
+                let res = mt63.processAudio(inpBuffer, inpBuffer.length, aEvt.inputBuffer.sampleRate);
 
                 if (res.length) {
                     // console.log("Received:", res);
                     var span = document.createElement("span");
-                    span.innerHTML = res;
+                    span.innerText = res;
                     document.getElementById("output").appendChild(span);
                 }
                 // console.log(newBuff);
