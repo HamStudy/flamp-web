@@ -6,13 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --display-modules --mode production",
-    "builddev": "webpack --display-modules --mode debug"
+    "builddev": "webpack --display-modules --mode development"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@hamstudy/flamp": "^1.1.1",
-    "@hamstudy/mt63-wasm": "~1.0.0",
+    "@hamstudy/mt63-wasm": "~1.1.0",
     "@types/copy-webpack-plugin": "^5.0.0",
     "@types/jest": "^24.0.13",
     "@types/webpack": "^4.4.32",
