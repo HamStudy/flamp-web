@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "webpack-dev-server --mode development --public --disableHostCheck --no-inline",
     "build": "webpack --display-modules --mode production",
     "builddev": "webpack --display-modules --mode development"
   },
@@ -26,6 +27,7 @@
     "tsc-watch": "^2.2.1",
     "typescript": "^3.5.1",
     "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.6.0"
   }
 }
